@@ -10,8 +10,10 @@ import { DashboardModule } from "./dashboard/dashboard.module";
 import { UsersModule } from "./users/users.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { FinanceiroModule } from "./financeiro/financeiro.module";
+import { HealthController } from "./health.controller";
 
 @Module({
+  controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
