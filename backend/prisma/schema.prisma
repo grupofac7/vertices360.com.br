@@ -1,0 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =================== EMPRESA ===================
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  cnpj      String?  @unique
+  email     String?
+  phone     String?
+  website   String?
+  plan      String   @default("starter")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users    User[]
+  leads    Lead[]
+  clients  Client[]
+  deals    Deal[]
+  tasks    Task[]
+  whatsappInstances WhatsappInstance[]
+
+  @@map("companies")
+}
+
+// =================== USUÁRIO ===================
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  password  String
+  role      UserRole @default(SELLER)
+  avatar    String?
+  active    Boolean  @default(true)
+  twoFaEnabled Boolean @default(false)
+  twoFaSecret  String?
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  assignedLeads    Lead[]    @relation("AssignedLeads")
+  assignedDeals    Deal[]    @relation("AssignedDeals")
+  activities       Activity[]
+  tasks            Task[]    @relation("TaskOwner")
+  sentMessages     WhatsappMessage[]
+
+  @@unique([email, companyId])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  SUPERVISOR
+  SELLER
+  FINANCE
+  SUPPORT
+}
+
+// =================== LEAD ===================
+model Lead {
+  id           String     @id @default(cuid())
+  name         String
+  email        String?
+  phone        String
+  city         String?
+  state        String?
+  source       LeadSource @default(MANUAL)
+  interest     String?
+  value        Float      @default(0)
+  score        Int        @default(50)
+  status       LeadStatus @default(NEW)
+  notes        String?
+  tags         String[]
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  lastContactAt DateTime?
+  nextActionAt  DateTime?
+  nextActionNote String?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  ownerId String?
+  owner   User?   @relation("AssignedLeads", fields: [ownerId], references: [id])
+
+  deals      Deal[]
+  activities Activity[]
+  tasks      Task[]
+  conversations WhatsappConversation[]
+
+  @@map("leads")
+}
+
+enum LeadSource {
+  MANUAL
+  META_ADS
+  GOOGLE_ADS
+  WHATSAPP
+  LANDING_PAGE
+  REFERRAL
+  ORGANIC
+  EMAIL
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+  POST_SALE
+}
+
+// =================== DEAL ===================
+model Deal {
+  id          String     @id @default(cuid())
+  title       String
+  value       Float
+  stage       DealStage  @default(NEW)
+  probability Int        @default(0)
+  closingDate DateTime?
+  notes       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  closedAt    DateTime?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  leadId  String?
+  lead    Lead?   @relation(fields: [leadId], references: [id])
+
+  ownerId String?
+  owner   User?   @relation("AssignedDeals", fields: [ownerId], references: [id])
+
+  @@map("deals")
+}
+
+enum DealStage {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+  POST_SALE
+}
+
+// =================== CLIENTE ===================
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  cnpj        String?
+  plan        String?
+  mrr         Float    @default(0)
+  nps         Int?
+  status      ClientStatus @default(ACTIVE)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  activities Activity[]
+
+  @@map("clients")
+}
+
+enum ClientStatus {
+  ACTIVE
+  AT_RISK
+  CHURNED
+}
+
+// =================== ATIVIDADE ===================
+model Activity {
+  id          String       @id @default(cuid())
+  type        ActivityType
+  description String
+  createdAt   DateTime     @default(now())
+
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+
+  clientId  String?
+  client    Client?  @relation(fields: [clientId], references: [id])
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("activities")
+}
+
+enum ActivityType {
+  NOTE
+  CALL
+  EMAIL
+  WHATSAPP
+  MEETING
+  TASK
+  STATUS_CHANGE
+  STAGE_CHANGE
+}
+
+// =================== TASK ===================
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  priority    TaskPriority @default(MEDIUM)
+  done        Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  ownerId String?
+  owner   User?   @relation("TaskOwner", fields: [ownerId], references: [id])
+
+  leadId  String?
+  lead    Lead?   @relation(fields: [leadId], references: [id])
+
+  @@map("tasks")
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// =================== WHATSAPP ===================
+model WhatsappInstance {
+  id         String   @id @default(cuid())
+  name       String
+  phone      String?
+  status     String   @default("disconnected")
+  qrCode     String?
+  apiUrl     String?
+  apiKey     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  conversations WhatsappConversation[]
+
+  @@map("whatsapp_instances")
+}
+
+model WhatsappConversation {
+  id         String   @id @default(cuid())
+  remoteJid  String
+  name       String?
+  status     String   @default("open")
+  unread     Int      @default(0)
+  tags       String[]
+  assigneeId String?
+  lastMessageAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  instanceId String
+  instance   WhatsappInstance @relation(fields: [instanceId], references: [id])
+
+  leadId     String?
+  lead       Lead?   @relation(fields: [leadId], references: [id])
+
+  messages   WhatsappMessage[]
+
+  @@unique([instanceId, remoteJid])
+  @@map("whatsapp_conversations")
+}
+
+model WhatsappMessage {
+  id             String   @id @default(cuid())
+  messageId      String?
+  fromMe         Boolean  @default(false)
+  type           String   @default("text")
+  content        String?
+  mediaUrl       String?
+  status         String   @default("sent")
+  timestamp      DateTime @default(now())
+
+  conversationId String
+  conversation   WhatsappConversation @relation(fields: [conversationId], references: [id])
+
+  senderId String?
+  sender   User?   @relation(fields: [senderId], references: [id])
+
+  @@map("whatsapp_messages")
+}
+
+// =================== TRANSACTION ===================
+model Transaction {
+  id          String            @id @default(cuid())
+  description String
+  type        TransactionType
+  value       Float
+  category    String?
+  date        DateTime          @default(now())
+  notes       String?
+  createdAt   DateTime          @default(now())
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
