@@ -12,8 +12,9 @@ const stats = [
     change: "+12%",
     positive: true,
     icon: Users,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10",
+    gradient: "from-blue-500/20 to-blue-600/5",
+    iconColor: "text-blue-400",
+    glow: "rgba(59,130,246,0.15)",
   },
   {
     label: "Receita do Mês",
@@ -21,8 +22,9 @@ const stats = [
     change: "+18.2%",
     positive: true,
     icon: DollarSign,
-    color: "text-green-500",
-    bg: "bg-green-500/10",
+    gradient: "from-emerald-500/20 to-emerald-600/5",
+    iconColor: "text-emerald-400",
+    glow: "rgba(16,185,129,0.15)",
   },
   {
     label: "Meta Mensal",
@@ -30,8 +32,9 @@ const stats = [
     change: "+5%",
     positive: true,
     icon: Target,
-    color: "text-purple-500",
-    bg: "bg-purple-500/10",
+    gradient: "from-violet-500/20 to-violet-600/5",
+    iconColor: "text-violet-400",
+    glow: "rgba(124,58,237,0.15)",
   },
   {
     label: "Taxa Conversão",
@@ -39,8 +42,9 @@ const stats = [
     change: "-2.1%",
     positive: false,
     icon: Percent,
-    color: "text-orange-500",
-    bg: "bg-orange-500/10",
+    gradient: "from-orange-500/20 to-orange-600/5",
+    iconColor: "text-orange-400",
+    glow: "rgba(249,115,22,0.15)",
   },
 ];
 
@@ -52,26 +56,39 @@ export function DashboardStats() {
           key={stat.label}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.05 }}
-          className="bg-card border border-border rounded-2xl p-5 hover:shadow-md transition-shadow"
+          transition={{ delay: i * 0.07 }}
+          className="relative rounded-2xl p-5 overflow-hidden group hover:scale-[1.01] transition-transform"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            boxShadow: `0 4px 30px ${stat.glow}`,
+          }}
         >
-          <div className="flex items-start justify-between mb-4">
-            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", stat.bg)}>
-              <stat.icon className={cn("w-5 h-5", stat.color)} />
+          {/* Background gradient */}
+          <div className={cn("absolute inset-0 bg-gradient-to-br opacity-60", stat.gradient)} />
+
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-4">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                <stat.icon className={cn("w-5 h-5", stat.iconColor)} />
+              </div>
+              <span
+                className={cn(
+                  "text-xs font-semibold flex items-center gap-0.5 px-2 py-1 rounded-full",
+                  stat.positive
+                    ? "text-emerald-400 bg-emerald-400/10"
+                    : "text-red-400 bg-red-400/10"
+                )}
+              >
+                {stat.positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                {stat.change}
+              </span>
             </div>
-            <span
-              className={cn(
-                "text-xs font-medium flex items-center gap-0.5",
-                stat.positive ? "text-green-500" : "text-red-500"
-              )}
-            >
-              {stat.positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {stat.change}
-            </span>
-          </div>
-          <div>
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-sm text-muted-foreground mt-0.5">{stat.label}</p>
+            <p className="text-2xl font-bold text-white">{stat.value}</p>
+            <p className="text-sm text-white/40 mt-0.5">{stat.label}</p>
           </div>
         </motion.div>
       ))}

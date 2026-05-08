@@ -12,22 +12,23 @@ const clients = [
   { id: "5", name: "Agency Digital", contact: "Lucas Ferreira", email: "lucas@digital.com", phone: "(11) 94321-0987", plan: "Pro", mrr: 5800, since: new Date("2023-08-15"), nps: 6, status: "churned" },
 ];
 
-const statusBadge: Record<string, string> = {
-  active: "bg-green-100 text-green-700",
-  at_risk: "bg-yellow-100 text-yellow-700",
-  churned: "bg-red-100 text-red-700",
+const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
+  active: { label: "Ativo", color: "text-emerald-400", bg: "rgba(16,185,129,0.12)" },
+  at_risk: { label: "Em risco", color: "text-yellow-400", bg: "rgba(234,179,8,0.12)" },
+  churned: { label: "Cancelado", color: "text-red-400", bg: "rgba(239,68,68,0.12)" },
 };
-const statusLabel: Record<string, string> = { active: "Ativo", at_risk: "Em risco", churned: "Cancelado" };
+
+const cardStyle = { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" };
 
 export default function ClientesPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Clientes</h1>
-          <p className="text-muted-foreground">Gestão da base de clientes ativos</p>
+          <h1 className="text-2xl font-bold text-white">Clientes</h1>
+          <p className="text-white/30 mt-0.5">Gestão da base de clientes ativos</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition">
+        <button className="flex items-center gap-2 gradient-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition glow-primary">
           <Plus className="w-4 h-4" />
           Novo Cliente
         </button>
@@ -35,66 +36,87 @@ export default function ClientesPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: "Total Clientes", value: "48", sub: "+3 este mês" },
-          { label: "MRR Total", value: formatCurrency(284500), sub: "+18% vs último mês" },
-          { label: "Churn Rate", value: "2.1%", sub: "-0.3% vs último mês" },
+          { label: "Total Clientes", value: "48", sub: "+3 este mês", color: "text-blue-400" },
+          { label: "MRR Total", value: formatCurrency(284500), sub: "+18% vs último mês", color: "text-emerald-400" },
+          { label: "Churn Rate", value: "2.1%", sub: "-0.3% vs último mês", color: "text-violet-400" },
         ].map((stat) => (
-          <div key={stat.label} className="bg-card border border-border rounded-2xl p-4">
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-sm text-muted-foreground">{stat.label}</p>
-            <p className="text-xs text-primary mt-1">{stat.sub}</p>
+          <div key={stat.label} className="rounded-2xl p-4" style={cardStyle}>
+            <p className="text-2xl font-bold text-white">{stat.value}</p>
+            <p className="text-sm text-white/40 mt-0.5">{stat.label}</p>
+            <p className={`text-xs mt-1 ${stat.color}`}>{stat.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-border">
+      <div className="rounded-2xl overflow-hidden" style={cardStyle}>
+        <div className="p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="relative max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input placeholder="Buscar clientes..." className="w-full bg-accent/50 border border-border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+            <input
+              placeholder="Buscar clientes..."
+              className="w-full rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-violet-500/40 transition"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+            />
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-accent/30 border-b border-border">
-              <tr>
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
                 {["Empresa", "Plano", "MRR", "Desde", "NPS", "Status", ""].map((h) => (
-                  <th key={h} className="text-left text-xs font-medium text-muted-foreground px-4 py-3">{h}</th>
+                  <th key={h} className="text-left text-xs font-medium text-white/30 px-4 py-3">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
-              {clients.map((c, i) => (
-                <motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.03 }} className="hover:bg-accent/30 transition group">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">{getInitials(c.name)}</div>
-                      <div>
-                        <p className="text-sm font-medium">{c.name}</p>
-                        <p className="text-xs text-muted-foreground">{c.contact}</p>
+            <tbody>
+              {clients.map((c, i) => {
+                const s = statusConfig[c.status];
+                return (
+                  <motion.tr
+                    key={c.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.04 }}
+                    className="group hover:bg-white/[0.02] transition"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                  >
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-xl flex items-center justify-center text-violet-300 text-xs font-bold"
+                          style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.2)" }}
+                        >
+                          {getInitials(c.name)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-white">{c.name}</p>
+                          <p className="text-xs text-white/30">{c.contact}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3"><span className="text-sm">{c.plan}</span></td>
-                  <td className="px-4 py-3"><span className="text-sm font-medium text-green-500">{formatCurrency(c.mrr)}</span></td>
-                  <td className="px-4 py-3"><span className="text-sm text-muted-foreground">{formatDate(c.since)}</span></td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                      <span className="text-sm font-medium">{c.nps}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusBadge[c.status]}`}>{statusLabel[c.status]}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                      <button className="w-7 h-7 rounded-lg hover:bg-accent flex items-center justify-center transition"><Phone className="w-3.5 h-3.5 text-muted-foreground" /></button>
-                      <button className="w-7 h-7 rounded-lg hover:bg-accent flex items-center justify-center transition"><MessageCircle className="w-3.5 h-3.5 text-green-500" /></button>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3"><span className="text-sm text-white/60">{c.plan}</span></td>
+                    <td className="px-4 py-3"><span className="text-sm font-semibold text-emerald-400">{formatCurrency(c.mrr)}</span></td>
+                    <td className="px-4 py-3"><span className="text-sm text-white/30">{formatDate(c.since)}</span></td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                        <span className="text-sm font-semibold text-white">{c.nps}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${s.color}`} style={{ background: s.bg }}>
+                        {s.label}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                        <button className="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center transition"><Phone className="w-3.5 h-3.5 text-white/40" /></button>
+                        <button className="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center transition"><MessageCircle className="w-3.5 h-3.5 text-emerald-400" /></button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

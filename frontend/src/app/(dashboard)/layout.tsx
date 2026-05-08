@@ -21,11 +21,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [token, isAuthenticated]);
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-screen overflow-hidden" style={{ background: "#08080f" }}>
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-6 scrollbar-hide">{children}</main>
       </div>
     </div>
   );

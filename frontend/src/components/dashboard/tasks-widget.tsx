@@ -11,10 +11,10 @@ const initialTasks = [
   { id: "4", title: "Reunião com equipe 15h", priority: "medium", done: false },
 ];
 
-const priorityColors: Record<string, string> = {
-  high: "text-red-500",
-  medium: "text-yellow-500",
-  low: "text-green-500",
+const priorityDot: Record<string, string> = {
+  high: "text-red-400",
+  medium: "text-yellow-400",
+  low: "text-emerald-400",
 };
 
 export function TasksWidget() {
@@ -24,28 +24,42 @@ export function TasksWidget() {
     setTasks((t) => t.map((task) => task.id === id ? { ...task, done: !task.done } : task));
   };
 
+  const pending = tasks.filter((t) => !t.done).length;
+
   return (
-    <div className="bg-card border border-border rounded-2xl p-5">
+    <div
+      className="rounded-2xl p-5"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.07)",
+      }}
+    >
       <div className="flex items-center gap-2 mb-4">
-        <Clock className="w-4 h-4 text-muted-foreground" />
-        <h3 className="font-semibold">Tarefas do Dia</h3>
-        <span className="ml-auto text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
-          {tasks.filter((t) => !t.done).length} pendentes
+        <Clock className="w-4 h-4 text-white/30" />
+        <h3 className="font-semibold text-white">Tarefas do Dia</h3>
+        <span
+          className="ml-auto text-xs px-2 py-0.5 rounded-full font-medium text-violet-400"
+          style={{ background: "rgba(124,58,237,0.15)" }}
+        >
+          {pending} pendentes
         </span>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {tasks.map((task) => (
           <button
             key={task.id}
             onClick={() => toggle(task.id)}
-            className="w-full flex items-center gap-3 text-left p-2 rounded-xl hover:bg-accent transition"
+            className="w-full flex items-center gap-3 text-left p-2.5 rounded-xl hover:bg-white/5 transition group"
           >
             {task.done ? (
-              <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
             ) : (
-              <Circle className={cn("w-4 h-4 flex-shrink-0", priorityColors[task.priority])} />
+              <Circle className={cn("w-4 h-4 flex-shrink-0", priorityDot[task.priority])} />
             )}
-            <span className={cn("text-sm flex-1", task.done && "line-through text-muted-foreground")}>
+            <span className={cn(
+              "text-sm flex-1 text-left",
+              task.done ? "line-through text-white/20" : "text-white/60 group-hover:text-white/80"
+            )}>
               {task.title}
             </span>
           </button>

@@ -31,7 +31,14 @@ export default function WhatsAppPage() {
   const [showInfo, setShowInfo] = useState(true);
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] rounded-2xl border border-border overflow-hidden bg-card">
+    <div
+      className="flex rounded-2xl overflow-hidden"
+      style={{
+        height: "calc(100vh - 7rem)",
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.07)",
+      }}
+    >
       <ConversationList
         conversations={mockConversations}
         selectedId={selected.id}

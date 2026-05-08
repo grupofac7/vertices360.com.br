@@ -11,30 +11,48 @@ const sellers = [
 ];
 
 const medals = ["🥇", "🥈", "🥉", "4º"];
+const avatarColors = [
+  { bg: "rgba(234,179,8,0.15)", border: "rgba(234,179,8,0.25)", text: "text-yellow-400" },
+  { bg: "rgba(148,163,184,0.15)", border: "rgba(148,163,184,0.25)", text: "text-slate-400" },
+  { bg: "rgba(180,83,9,0.15)", border: "rgba(180,83,9,0.25)", text: "text-amber-600" },
+  { bg: "rgba(124,58,237,0.15)", border: "rgba(124,58,237,0.25)", text: "text-violet-400" },
+];
 
 export function TopSellers() {
   return (
-    <div className="bg-card border border-border rounded-2xl p-5">
+    <div
+      className="rounded-2xl p-5"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.07)",
+      }}
+    >
       <div className="flex items-center gap-2 mb-4">
-        <Trophy className="w-4 h-4 text-yellow-500" />
-        <h3 className="font-semibold">Top Vendedores</h3>
+        <Trophy className="w-4 h-4 text-yellow-400" />
+        <h3 className="font-semibold text-white">Top Vendedores</h3>
       </div>
       <div className="space-y-3">
-        {sellers.map((s, i) => (
-          <div key={s.name} className="flex items-center gap-3">
-            <span className="text-lg w-6">{medals[i]}</span>
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
-              {getInitials(s.name)}
+        {sellers.map((s, i) => {
+          const c = avatarColors[i];
+          return (
+            <div key={s.name} className="flex items-center gap-3">
+              <span className="text-base w-6">{medals[i]}</span>
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.text}`}
+                style={{ background: c.bg, border: `1px solid ${c.border}` }}
+              >
+                {getInitials(s.name)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">{s.name}</p>
+                <p className="text-xs text-white/30">{s.deals} negócios</p>
+              </div>
+              <span className="text-sm font-semibold text-emerald-400">
+                {formatCurrency(s.revenue)}
+              </span>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{s.name}</p>
-              <p className="text-xs text-muted-foreground">{s.deals} negócios</p>
-            </div>
-            <span className="text-sm font-semibold text-green-500">
-              {formatCurrency(s.revenue)}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

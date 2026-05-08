@@ -23,13 +23,22 @@ export function RevenueChart() {
   const [period, setPeriod] = useState("6M");
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-5">
+    <div
+      className="rounded-2xl p-5"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.07)",
+      }}
+    >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="font-semibold">Receita</h3>
-          <p className="text-sm text-muted-foreground">vs meta mensal</p>
+          <h3 className="font-semibold text-white">Receita</h3>
+          <p className="text-sm text-white/30 mt-0.5">vs meta mensal</p>
         </div>
-        <div className="flex bg-accent rounded-xl p-1 gap-1">
+        <div
+          className="flex rounded-xl p-1 gap-1"
+          style={{ background: "rgba(255,255,255,0.05)" }}
+        >
           {periods.map((p) => (
             <button
               key={p}
@@ -37,8 +46,8 @@ export function RevenueChart() {
               className={cn(
                 "px-3 py-1 text-xs font-medium rounded-lg transition",
                 period === p
-                  ? "bg-card shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "gradient-brand text-white shadow-sm"
+                  : "text-white/30 hover:text-white/60"
               )}
             >
               {p}
@@ -51,23 +60,55 @@ export function RevenueChart() {
         <AreaChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6271f1" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#6271f1" stopOpacity={0} />
+              <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorMeta" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
               <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-          <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-          <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+          <XAxis
+            dataKey="month"
+            tick={{ fontSize: 12, fill: "rgba(255,255,255,0.3)" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+            tick={{ fontSize: 12, fill: "rgba(255,255,255,0.3)" }}
+            axisLine={false}
+            tickLine={false}
+          />
           <Tooltip
             formatter={(v: number) => formatCurrency(v)}
-            contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12 }}
+            contentStyle={{
+              background: "rgba(15,15,25,0.95)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 12,
+              color: "#fff",
+            }}
+            labelStyle={{ color: "rgba(255,255,255,0.5)" }}
           />
-          <Area type="monotone" dataKey="meta" stroke="#10b981" strokeWidth={2} strokeDasharray="4 4" fill="url(#colorMeta)" name="Meta" />
-          <Area type="monotone" dataKey="receita" stroke="#6271f1" strokeWidth={2.5} fill="url(#colorReceita)" name="Receita" connectNulls={false} />
+          <Area
+            type="monotone"
+            dataKey="meta"
+            stroke="#10b981"
+            strokeWidth={2}
+            strokeDasharray="4 4"
+            fill="url(#colorMeta)"
+            name="Meta"
+          />
+          <Area
+            type="monotone"
+            dataKey="receita"
+            stroke="#7c3aed"
+            strokeWidth={2.5}
+            fill="url(#colorReceita)"
+            name="Receita"
+            connectNulls={false}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
