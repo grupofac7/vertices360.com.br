@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   async update(id: string, data: Partial<{ name: string; role: string; avatar: string }>) {
-    return this.prisma.user.update({ where: { id }, data });
+    return this.prisma.user.update({ where: { id }, data: data as any });
   }
 
   async deactivate(id: string) {
