@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, Users, GitBranch, MessageCircle,
   DollarSign, BarChart3, Settings, Zap,
-  Building2, UserCheck, ChevronRight,
+  Building2, UserCheck, ChevronRight, Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -16,6 +16,7 @@ const navItems = [
   { icon: Users, label: "Leads", href: "/leads" },
   { icon: GitBranch, label: "Pipeline", href: "/pipeline" },
   { icon: MessageCircle, label: "WhatsApp", href: "/whatsapp", badge: 3 },
+  { icon: Send, label: "Disparos", href: "/disparos" },
   { icon: UserCheck, label: "Clientes", href: "/clientes" },
   { icon: DollarSign, label: "Financeiro", href: "/financeiro" },
   { icon: BarChart3, label: "Relatórios", href: "/relatorios" },
