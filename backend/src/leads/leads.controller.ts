@@ -63,7 +63,7 @@ export class LeadsController {
 
   @Patch(":id")
   update(@Param("id") id: string, @Body() dto: UpdateLeadDto, @Request() req: any) {
-    return this.leads.update(id, req.user.companyId, dto);
+    return this.leads.update(id, req.user.companyId, dto as any);
   }
 
   @Delete(":id")
