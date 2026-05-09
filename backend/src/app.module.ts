@@ -10,6 +10,7 @@ import { DashboardModule } from "./dashboard/dashboard.module";
 import { UsersModule } from "./users/users.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { FinanceiroModule } from "./financeiro/financeiro.module";
+import { DisparosModule } from "./disparos/disparos.module";
 import { HealthController } from "./health.controller";
 
 @Module({
@@ -26,6 +27,7 @@ import { HealthController } from "./health.controller";
     WhatsappModule,
     DashboardModule,
     FinanceiroModule,
+    DisparosModule,
   ],
 })
 export class AppModule {}

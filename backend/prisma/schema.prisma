@@ -26,6 +26,8 @@ model Company {
   deals    Deal[]
   tasks    Task[]
   whatsappInstances WhatsappInstance[]
+  disparos          Disparo[]
+  disparoTemplates  DisparoTemplate[]
 
   @@map("companies")
 }
@@ -333,4 +335,45 @@ model Transaction {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+// =================== DISPAROS ===================
+model Disparo {
+  id              String    @id @default(cuid())
+  name            String
+  status          String    @default("DRAFT")
+  templateMessage String
+  contactsJson    String    @default("[]")
+  totalContacts   Int       @default(0)
+  sentCount       Int       @default(0)
+  deliveredCount  Int       @default(0)
+  readCount       Int       @default(0)
+  repliedCount    Int       @default(0)
+  intervalMin     Int       @default(30)
+  intervalMax     Int       @default(90)
+  scheduleAt      DateTime?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+  createdBy String
+
+  @@map("disparos")
+}
+
+model DisparoTemplate {
+  id        String   @id @default(cuid())
+  name      String
+  message   String
+  variables String   @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  @@map("disparo_templates")
 }
